@@ -1,0 +1,76 @@
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    .navbar {
+      background-color: #e3f2fd; /* Light casual blue */
+      padding-top: 0.7rem;
+      padding-bottom: 0.7rem;
+    }
+    .nav-link {
+      font-weight: 500;
+      font-size: 1rem;
+      color: #333333;
+    }
+    .nav-link:hover,
+    .nav-link:focus {
+      color: #0d6efd;
+    }
+    .material-icons {
+      vertical-align: middle;
+      font-size: 20px;
+      margin-right: 6px;
+      color: #0d6efd;
+    }
+    /* Increase tap target size */
+    .nav-link {
+      padding: 0.5rem 1rem;
+    }
+  </style>
+
+<body>
+  <nav class="navbar navbar-expand-md">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-primary" href="#">MyFlaskApp</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">
+              <span class="material-icons" aria-hidden="true">Home</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">
+              <span class="material-icons" aria-hidden="true">About</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/articles">
+              <span class="material-icons" aria-hidden="true">Articles</span>
+            </a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link" href="/register">
+              <span class="material-icons" aria-hidden="true">Register</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  
