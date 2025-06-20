@@ -77,38 +77,39 @@ def register():
 
 #USER LOGIN
 
-class LoginForm(Form):
-    username = StringField('Username', [validators.Length(min=1, max=50)])
-    password = PasswordField('Password',[validators.DataRequired()])
-
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate():
-        username = form.username.data
-        password = form.password.data
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-        sql = mysql.connection.cursor()
-        result = sql.execute("SELECT * FROM users WHERE username = %s", [username])
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
         
         if result > 0:
-            user_data = sql.fetchone()
+            user_data = cur.fetchone()
             password_hash = user_data['password']
 
             if sha256_crypt.verify(password, password_hash):
                 session['logged_in'] = True
                 session['username'] = username
 
-                flash('You are now logged in! Happy blogging', 'success')
-                return redirect(url_for('index'))
+                flash(f"You are now logged in! Happy blogging", 'success')
+                return redirect(url_for('dashboard'))
             else:
                 flash('Invalid Password', 'danger')
         else:
             flash('User not found', 'danger')
 
-        sql.close()
+        cur.close()
 
-    return render_template('login.html', form=form)
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
 
 if __name__ == '__main__':
     app.secret_key='secret123'
