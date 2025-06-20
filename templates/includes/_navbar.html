@@ -62,16 +62,24 @@
               <span class="material-icons" aria-hidden="true">Articles</span>
             </a>
           </li>
-           <li class="nav-item">
-            <a class="nav-link" href="/register">
-              <span class="material-icons" aria-hidden="true">Register</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login">
-              <span class="material-icons" aria-hidden="true">Login</span>
-            </a>
-          </li>
+          {% if session.logged_in %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/logout">
+                    <span class="material-icons" aria-hidden="true">Logout</span>
+                  </a>
+                </li>
+          {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/register">
+                    <span class="material-icons" aria-hidden="true">Register</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/login">
+                    <span class="material-icons" aria-hidden="true">Login</span>
+                  </a>
+                </li>
+          {% endif %}
         </ul>
       </div>
     </div>
