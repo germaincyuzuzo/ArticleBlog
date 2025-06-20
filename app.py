@@ -70,9 +70,45 @@ def register():
 
         flash("You are now registered and can log in", 'success')
 
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+
+#USER LOGIN
+
+class LoginForm(Form):
+    username = StringField('Username', [validators.Length(min=1, max=50)])
+    password = PasswordField('Password',[validators.DataRequired()])
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        username = form.username.data
+        password = form.password.data
+
+        sql = mysql.connection.cursor()
+        result = sql.execute("SELECT * FROM users WHERE username = %s", [username])
+        
+        if result > 0:
+            user_data = sql.fetchone()
+            password_hash = user_data['password']
+
+            if sha256_crypt.verify(password, password_hash):
+                session['logged_in'] = True
+                session['username'] = username
+
+                flash('You are now logged in! Happy blogging', 'success')
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid Password', 'danger')
+        else:
+            flash('User not found', 'danger')
+
+        sql.close()
+
+    return render_template('login.html', form=form)
 
 if __name__ == '__main__':
     app.secret_key='secret123'
