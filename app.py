@@ -125,11 +125,24 @@ def logout():
     flash('You are logged out', 'success')
     return redirect(url_for('login'))
 
+#RETREIVING DATA FROM THE DATABASE
+
+def get_articles():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM articles")
+
+    articles = cur.fetchall()
+    cur.close()
+    return articles
+
 #DASHBOARD
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
-    return render_template('dashboard.html')
+    articles = get_articles()
+    return render_template('dashboard.html', articles=articles)
+
+
 
 #ADDING ARTICLE
 
