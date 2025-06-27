@@ -1,20 +1,10 @@
 {% extends 'layouts.html' %}
 
 {% block content %}
-
-<div class="jumbotron text-center">
-
-    {% for article in articles %}
-        {% if article.id == id %}
-
-        <h1>{{ article.title }}</h1>
-        <p>Written by: {{ article.author }}</p>
-        <p>Body: <br>
-            {{ article.body }}
-        </p>
-        {% endif %}
-    {% endfor %}
-
-</div>
-
+    <h1>{{article.title}}</h1>
+    <small>Written by {{article.author}} on {{article.create_date}}</small>
+    <hr>
+    <div>
+        {{article.body | safe}}
+    </div>
 {% endblock %}

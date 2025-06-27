@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
-from data import Articles
+# from data import Articles
 #IMPORTING MYSQLDB
 from flask_mysqldb import MySQL
 #FROM FORMS WE IMPORT EACH TYPE OF FIELD WE WILL USE
@@ -19,8 +19,6 @@ app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-Articles = Articles()
-
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -31,12 +29,18 @@ def about():
 
 @app.route('/articles')
 def articles():
-    return render_template('articles.html', articles=Articles)
+    articles = get_articles()
+    return render_template('articles.html', articles=articles)
 
 @app.route('/article/<string:id>/')
 def article_info(id):
-    return id
-    # return render_template('article_info.html', article=Articles)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM articles WHERE id = %s", [id])
+    article = cur.fetchone()
+
+    # cur.close()
+
+    return render_template('article_info.html', article=article)
 
 class RegisterForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
@@ -129,11 +133,16 @@ def logout():
 
 def get_articles():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM articles")
+    result = cur.execute("SELECT * FROM articles")
 
-    articles = cur.fetchall()
-    cur.close()
-    return articles
+    if result > 0:
+        articles = cur.fetchall()
+        cur.close()
+        return articles
+    else:
+        flash("No articles found", 'danger')
+        return render_template('dashboard.html')
+
 
 #DASHBOARD
 @app.route('/dashboard')
