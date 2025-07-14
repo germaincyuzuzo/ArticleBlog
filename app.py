@@ -131,17 +131,14 @@ def logout():
 
 #RETREIVING DATA FROM THE DATABASE
 
+
 def get_articles():
     cur = mysql.connection.cursor()
     result = cur.execute("SELECT * FROM articles")
+    articles = cur.fetchall() if result > 0 else []
+    cur.close()
+    return articles
 
-    if result > 0:
-        articles = cur.fetchall()
-        cur.close()
-        return articles
-    else:
-        flash("No articles found", 'danger')
-        return render_template('dashboard.html')
 
 
 #DASHBOARD
@@ -149,6 +146,8 @@ def get_articles():
 @is_logged_in
 def dashboard():
     articles = get_articles()
+    if not articles:
+        flash("No articles found. Create articles to view them here!", "warning")
     return render_template('dashboard.html', articles=articles)
 
 
@@ -179,6 +178,65 @@ def addArticle():
         return redirect(url_for('dashboard'))
 
     return render_template("addArticle.html", form=form)
+
+
+#EDITING ARTICLE
+
+@app.route('/editArticle/<string:id>', methods=['POST', 'GET'])
+@is_logged_in
+def editArticle(id):
+    # create a cursor
+
+    cur = mysql.connection.cursor()
+
+    #Get article by id
+
+    article = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
+
+    article = cur.fetchone()
+
+    #Get form
+
+    form = ArticleForm(request.form)
+
+    #Populate article foem fields
+
+    form.title.data = article['title']
+    form.body.data = article['body']
+
+    if request.method == 'POST' and form.validate():
+        title = request.form['title']
+        body = request.form['body']
+        author = session['username']
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE articles SET title=%s, body=%s WHERE id = %s", (title, body, id))
+
+        mysql.connection.commit()
+
+        cur.close()
+
+        flash('Article Updated', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template("editArticle.html", form=form)
+
+#DELETING ARTICLE
+
+@app.route('/deleteArticle/<string:id>', methods=['POST'])
+@is_logged_in
+def deleteArticle(id):
+
+    #create a cursor
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM articles WHERE id = %s", [id])
+
+    #commit changes
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Article Deleted', 'success')
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.secret_key='secret123'
